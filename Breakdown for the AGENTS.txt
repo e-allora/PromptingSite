@@ -1,0 +1,341 @@
+Breakdown for the AGENTS.
+
+Vercel (Frontend Hosting) Your Next.js app is hosted on Vercel. When a user visits yourdomain.com, Vercel serves the static HTML/CSS/JS. Cloudflare (your domain registrar) caches and secures the request. Input: User’s browser request Output: HTML/CSS/JS loaded in browser 2. User Logs In (or Signs Up) Player: Supabase Auth User enters email/password (or OAuth like Google/GitHub). Supabase Auth handles the login/signup and returns a JWT token. Your Next.js app stores the token (in cookies or localStorage). Input: User credentials Output: Authenticated user session (JWT token) 3. User Writes a Prompt Player: Next.js Frontend User types a prompt into a text box. Your React/Next.js app captures the input and sends it to your backend API. Input: User’s prompt text Output: API request to backend 4. Backend Processes the Request Player: Railway (Backend Hosting) or Next.js API Route Your backend (Railway or Next.js API) receives the prompt. It checks the user’s JWT token (via Supabase Auth). It applies your hardcoded routing logic (e.g., "Is this a coding prompt? Use Devstral."). Input: Prompt + user token Output: Decision on which LLM to call 5. Backend Calls OpenRouter (LLM API) Player: OpenRouter Your backend sends the prompt to OpenRouter with the selected model. OpenRouter routes the request to the correct LLM (e.g., Qwen 3, Devstral). The LLM generates a response. Input: Prompt + model selection Output: LLM response (text) 6. Backend Saves Data to Supabase Player: Supabase (Database) Your backend logs the API call in Supabase: Which model was used How many tokens were used The cost (in USD) The user ID It also saves the prompt (if the user wants to save it). Input: LLM response + metadata Output: Data stored in Supabase 7. Backend Returns Response to User Player: Railway/Next.js API Your backend sends the LLM’s response back to the frontend. The frontend displays the result to the user. Input: LLM response Output: User sees the answer 8. Cloudflare Caches & Secures Everything Player: Cloudflare Cloudflare caches static assets (HTML/CSS/JS) for faster loading. It blocks malicious requests (DDoS protection, WAF). It routes traffic to Vercel. Input: All requests Output: Faster, secure delivery 🧩 Input: LLM response Output: User sees the answer 8. Cloudflare Caches & Secures Everything Player: Cloudflare Cloudflare caches static assets (HTML/CSS/JS) for faster loading. It blocks malicious requests (DDoS protection, WAF). It routes traffic to Vercel. Input: All requests Output: Faster, secure delivery This above is the response from the previous session i want to tell the agents to implement. The photo is promptcowboy.ai and what i am looking to do but a unique work inspired by promptcowboy.ai. I want to add into the 'build and test loop" prompt i showed in the last pasted photo.
+
+Got it. Below is a clean “endgoal + tech stack + what the loop must do” block you can paste into your agents’ task definition.
+
+Endgoal (finished product)
+--------------------------
+
+Build a production-ready web app that lets a logged-in user type a prompt, routes the request server-side to the correct LLM, returns the generated answer, and records usage + metadata in the database. The UI should be “builds like Prompt Cowboy”-style (great prompt UX), but unique in layout/branding and implementation.
+
+Tech stack (implementation target)
+----------------------------------
+
+-   Frontend hosting: Vercel (Next.js web app)
+-   Frontend framework: Next.js + React + TypeScript
+-   Styling: Tailwind CSS (or equivalent)
+-   Auth: Supabase Auth (email/password and optional OAuth)
+-   Database: Supabase Postgres
+-   ORM: Prisma (or Supabase client directly if you prefer, but be consistent)
+-   Backend execution: Next.js Route Handlers / API routes (server-side)
+-   LLM gateway: OpenRouter (model routing logic lives in your backend)
+-   Domain security + caching: Cloudflare (configure DNS/proxy; static caching + WAF managed by Cloudflare)
+-   Observability (in-app): store prompt + response metadata in Supabase (user_id, model used, tokens, cost, timestamps)
+
+Build & Test Loop (what the agents must follow)
+-----------------------------------------------
+
+1.  Discovery pass (no coding yet):
+    
+    -   Define the exact user flows: Sign in → submit prompt → see response → (optional) save history.
+    -   Define the API contract(s) between UI and backend (request/response JSON fields).
+    -   Define the LLM routing rules (e.g., “coding prompt → model A; non-coding → model B”). Keep it deterministic and testable.
+2.  Implement in small vertical slices:
+    
+    -   Slice A: Auth UI + authenticated session handling (frontend).
+    -   Slice B: Prompt submission UI → calls backend (frontend ↔ API contract).
+    -   Slice C: Backend route validates JWT → chooses model → calls OpenRouter → returns response.
+    -   Slice D: Backend persists metadata to Supabase (and prompt/response if required).
+3.  Add “Prompt Cowboy-inspired” UI/UX (unique work):
+    
+    -   Create a prompt workspace UI with:
+        -   input box, submit button, loading state
+        -   response area
+        -   clear error states (auth required, API errors, LLM errors)
+    -   Don’t copy the UI—build a distinct layout/interaction pattern inspired by the concept: fast, guided, and clean prompt-to-output flow.
+4.  Hard requirements for correctness:
+    
+    -   Backend must verify the authenticated user (JWT from Supabase Auth).
+    -   Model routing must be covered by unit tests (inputs → expected selected model).
+    -   OpenRouter calls must be wrapped so failures return a safe, user-friendly error response.
+    -   Supabase writes must be validated (required fields; handle write failures).
+5.  Testing gates (fail the build if any fail):
+    
+    -   Unit tests:
+        -   LLM routing function
+        -   API input validation (schema)
+        -   Supabase persistence function (mocked)
+    -   Integration tests (as feasible):
+        -   API route returns expected response shape
+    -   UI tests (optional but preferred):
+        -   submit → loading → render response; submit blocked when logged out
+6.  PR-ready deliverables every loop:
+    
+    -   Code changes + tests
+    -   Update README with:
+        -   env vars list
+        -   local run commands
+        -   how to test
+        -   how model routing works
+
+LLM + data contract (agents must implement)
+-------------------------------------------
+
+-   Backend request input: `{ prompt: string }`
+-   Backend response output: `{ answer: string, modelUsed: string, usage?: { tokens?: number, costUsd?: number }, requestId?: string }`
+-   Supabase log fields (minimum):
+    -   `user_id`
+    -   `prompt`
+    -   `model_used`
+    -   `tokens_used` (if available)
+    -   `cost_usd` (if available)
+    -   `created_at`
+    -   (optional) `response_text`
+
+
+
+Mission (Endgoal)
+-----------------
+
+Implement a production-ready web app where users can sign up/log in, submit a prompt, and receive a generated response. The server must route the prompt to the correct LLM provider/model (via OpenRouter), then persist usage metadata (and optionally conversation data) to Supabase. The UI should be “Prompt Cowboy inspired” (fast, clean prompt → output flow, guided experience), but not a copy—create a distinct layout/interaction design.
+
+Target Tech Stack
+-----------------
+
+-   Frontend: Next.js (App Router) + React + TypeScript + Tailwind CSS
+-   Hosting (frontend): Vercel
+-   Auth: Supabase Auth (email/password; OAuth optional)
+-   API/Backend: Next.js Route Handlers (server-side) in the same repo
+-   LLM gateway: OpenRouter (model routing logic lives in your backend)
+-   Database: Supabase Postgres
+-   ORM / DB access: Prisma (preferred for consistency) + Supabase client only if needed
+-   Domain / security / caching: Cloudflare (proxy + caching + WAF config)
+-   Testing: unit tests + integration tests for API routes; Playwright optional but preferred
+
+System Behavior (Required Flow)
+-------------------------------
+
+1.  User visits site → served by Vercel.
+2.  User signs up / logs in using Supabase Auth → app maintains authenticated session.
+3.  User enters prompt in UI.
+4.  UI calls backend API with the prompt.
+5.  Backend verifies JWT (from Supabase) and rejects unauthenticated requests.
+6.  Backend applies deterministic routing logic to decide which model to call on OpenRouter.
+7.  Backend calls OpenRouter → receives model output.
+8.  Backend persists log/metadata to Supabase (at minimum: user_id, model_used, tokens/cost if available, prompt, timestamps; optionally response text).
+9.  Backend returns response → UI renders answer and handles errors gracefully.
+
+Build & Test Loop (Agent Workflow)
+----------------------------------
+
+Use an iterative loop. For every change:
+
+-   implement
+-   add/adjust tests
+-   run tests
+-   only then continue
+
+### Pass 1 — Discovery (No code yet)
+
+-   Write the exact API contract between frontend and backend (request/response JSON).
+-   Define the LLM routing rules as code-level logic (deterministic, testable).
+-   Define the Supabase schema (tables/columns + required fields).
+-   Define env vars required for local/dev/prod.
+
+### Pass 2 — Vertical Slice Implementation (small commits)
+
+Implement the app in slices (don’t try to build everything at once):
+
+1.  Auth slice: login/signup UI + protected API access
+2.  Prompt slice: prompt UI + calls backend API + loading/error states
+3.  LLM slice: backend calls OpenRouter and returns output
+4.  Persistence slice: save metadata to Supabase
+5.  Routing slice: integrate routing rules and tests for routing decisions
+6.  Polish slice: “Prompt Cowboy inspired” UX (unique layout/behavior)
+
+### Pass 3 — Tests as the Loop Condition
+
+You must add tests that fail first when logic is wrong, then pass after fixes.
+
+-   Unit tests:
+    -   routing logic: given inputs → expected `modelUsed`
+    -   API input validation schema
+    -   persistence logic: ensures required fields are written
+-   Integration/API tests (as feasible):
+    -   auth-required API behavior (authenticated vs unauthenticated)
+    -   API returns correct response shape
+-   UI tests (optional but encouraged):
+    -   submit prompt → shows loading → renders response
+
+### Fail Criteria (Stop and fix)
+
+Any of these fails the iteration:
+
+-   route returns wrong response shape
+-   tests fail
+-   missing auth verification
+-   Supabase write fails without handling/recovering
+-   OpenRouter failures aren’t converted into a safe, user-friendly API error
+
+Concrete Contracts (Agents Must Implement)
+------------------------------------------
+
+### Backend API Contract (minimum)
+
+Request: `{ "prompt": string }`
+Response: `{ "answer": string, "modelUsed": string, "usage"?: { "tokens"?: number, "costUsd"?: number } }`
+
+### Supabase Persistence (minimum required fields)
+
+-   `user_id`
+-   `prompt`
+-   `model_used`
+-   `tokens_used` (nullable if unknown)
+-   `cost_usd` (nullable if unknown)
+-   `created_at`
+-   optionally `response_text`
+
+Prompt Cowboy-Inspired UX Requirements (Unique Work)
+----------------------------------------------------
+
+Create a distinct UI that still feels like a premium prompt workspace:
+
+-   clear prompt input area
+-   obvious “send” action + disabled state while generating
+-   responsive loading indicator
+-   clean display of the generated answer
+-   robust error messaging (auth error vs API/LLM error)
+-   optional prompt history panel (only if your scope supports it)
+
+Deliverables per Iteration
+--------------------------
+
+-   working code
+-   updated tests
+-   README updates (env vars + local run/test commands + how routing works)
+-   commit with minimal diffs (prefer small focused changes)
+
+
+Github.com/e-allora/PromptingSite. The repository with best practices, coding conventions, cheat sheets, and a fork of an agentic coding rulebook repo, is all together in my github repo where i would like to keep their work, with great documentation, so **nothibg is deleted***, changes are added as a new file-- and theres always a chain of change that can be traced back if needed to. Please do not alter things in fhe repository nor the repositories near them. No deleting. Only adding new commits and meticulous documentation made jt so easy. All of the files are located in that repo. I can copy and paste jf jts easier but its probavly easier fir you to just check the repo
+
+`https://github.com/e-allora/PromptingSite`
+
+
+In the meantime, here’s a constraint block you can paste into the agents so they follow your rule:
+
+-   Repository change policy: Never modify or delete existing files. Only add new files/dirs, and only where necessary to integrate the feature.
+-   Traceability: Every iteration must include a new `docs/CHANGELOG.md` entry (or equivalent) describing what was added, why, and which new files map to the change. If multiple iterations add the same area, link to prior entries.
+-   Documentation standard: For every new module, create a matching `docs/` note explaining purpose, inputs/outputs, and how it’s tested.
+-   No edits near neighbors: Do not alter files in any neighboring repos referenced by your conventions; do not update their config/lockfiles.
+
+Reply with the correct repo URL (or paste the conventions markdown), and I’ll tailor the full “build & test loop + endgoal + tech stack” prompt to fit that repo exactly.
+
+Its github.com/e-allora/PromptingSite.
+-
+Once I have that, I’ll output a single paste-ready “agent build & test loop prompt” that tells them exactly what to add (paths/names), what to test, and how to document each change with a traceable chain.
+-   “Agents must ONLY add new files; they must not modify or delete any existing file (even config files), and they should document each change in a new docs entry.”
+
+Once you paste those, I’ll produce a final, paste-ready “agent build & test loop” prompt that:
+
+-   encodes your endgoal + tech stack (Vercel/Next.js + Supabase Auth + OpenRouter + Supabase logging + Cloudflare),
+-   forces deterministic LLM routing + required request/response schemas,
+-   and enforces the “add-only + meticulous traceable docs” rule with specific file paths to create.
+
+So i took a photo and did ocr with iphone. Hope this is good enough. Its signed into this repo on the plaform where the agents are. Here are the names of folders etc you recomended. e-allora Add files via upload OtherSimilarPromptImprovementSites PromptCowboy.ai-RealUXPHOTOS agentic-coding-rulebook-main BestPractices-DataCamp.md Data Information-Knowledge-Wisdom P... Infographic_the_generative_AI_landsca... In LLMops.md Ins agentic-coding-rulebook-main BestPractices-DataCamp.md Data Information-Knowledge-Wisdom P... Infographic_the_generative_Al_landsca... LLMops.md MLopsTools.md README.md Screenshot 2026-07-13 at 23-27-02 ai-ag... integration-testing.md Ir U In: Ins README PromptingSite A prompting improvement site. https://github
+
+Great—based on the folder names you OCR’d, I can’t see the actual contents of your conventions yet, but I can still give you a final paste-ready agent instruction that (a) implements your app, (b) uses a build/test loop, and (c) enforces your “add-only + meticulous documentation + traceable chain” rule.
+
+Copy/paste this into your agents as the main instruction. After that, paste the contents (or key excerpts) of README.md, LLMops.md, integration-testing.md, and BestPractices-DataCamp.md so I can align wording and file paths perfectly.
+
+Agent Build & Test Loop Instruction (paste-ready)  there are files photos examples coding conventions best practices and theory for all coding agents to be well informed and 
+-------------------------------------------------
+
+### Goal / Finished Product
+
+Build “PromptingSite”: a prompting improvement web app where authenticated users can submit a prompt, the backend routes the request to an LLM via OpenRouter, the response is returned to the UI, and the app records usage/metadata to Supabase. The UI should be inspired by a premium “prompt → output” experience (Prompt Cowboy–real UX inspired), but uniquely designed for this project.
+
+### Hard Constraints (must follow)
+
+-   Add-only changes: Never delete or modify existing files. Only add new files/directories.
+-   No edits to neighboring repos or rulebook sources: Do not change anything inside the agentic-coding-rulebook-main area besides adding new docs/files in your own directories (and never touch other repos’ files).
+-   Traceability: Every iteration must add a new documentation entry describing:
+    -   what functionality was added/fixed
+    -   what new files were created
+    -   why the change was needed
+    -   which tests were added/updated (if any)
+    -   link/point to prior iteration docs entry (a “chain of change”)
+-   No missing docs: Every new module must have a companion doc file describing purpose, inputs/outputs, and how it’s tested.
+-   Keep conventions: Follow any rules in the repo markdown docs you find (README/LLMops/integration-testing/best practices).
+
+### Target Tech Stack (implementation)
+
+-   Frontend: Next.js + React + TypeScript + Tailwind (or the repo’s established styling approach)
+-   Hosting: Vercel for the Next.js app
+-   Auth: Supabase Auth (JWT validation required server-side)
+-   Database: Supabase Postgres
+-   LLM routing: Backend chooses model/provider using deterministic routing logic, then calls OpenRouter
+-   Persistence of usage/metadata: Save at least `user_id`, `prompt`, `model_used`, `tokens/cost if available`, timestamps; optionally response text
+-   Edge security: Cloudflare in front of the deployment (document setup; implement app behavior regardless)
+
+### Required App Behavior (functional requirements)
+
+1.  User can sign up / log in (Supabase Auth).
+2.  UI collects a prompt.
+3.  UI sends prompt to backend API (server-side).
+4.  Backend:
+    -   verifies authenticated session/JWT with Supabase
+    -   validates input schema
+    -   applies routing logic to select LLM model
+    -   calls OpenRouter
+    -   returns response in a stable JSON shape
+    -   writes metadata to Supabase
+5.  UI displays:
+    -   loading state
+    -   answer
+    -   clear error state (auth vs validation vs upstream/LLM vs persistence)
+
+### API / Data Contracts (agents must implement)
+
+POST /api/prompt
+
+-   Request body: `{ "prompt": string }`
+-   Response body:
+    -   success: `{ "answer": string, "modelUsed": string, "usage"?: { "tokens"?: number, "costUsd"?: number }, "requestId"?: string }`
+    -   failure: consistent error shape documented in code comments + docs
+
+Supabase logging (minimum fields)
+
+-   `user_id`
+-   `prompt`
+-   `model_used`
+-   `tokens_used` (nullable)
+-   `cost_usd` (nullable)
+-   `created_at`
+-   optionally `response_text`
+
+### LLM Routing Rules (must be deterministic + testable)
+
+-   Implement routing as a pure function (or equivalent) that maps prompt characteristics → `modelUsed`.
+-   Routing must be unit tested with representative prompt categories.
+
+### Build & Test Loop (required process)
+
+For every iteration:
+
+1.  Discovery pass: update/produce a short design note doc describing approach (no coding yet).
+2.  Implement vertical slice: auth → prompt API call → routing → OpenRouter call → persistence → UI display.
+3.  Add/ensure tests:
+    -   unit tests for routing
+    -   tests for input validation
+    -   integration tests for API contract (auth required + response shape)
+4.  Run tests: ensure commands succeed (use repo scripts).
+5.  Document: add a new traceable “iteration doc” entry and add companion docs for new modules.
+
+### UI/UX (Prompt Cowboy inspired, but unique)
+
+Create a distinct “prompt workspace” layout:
+
+-   prompt input component with ergonomic UX
+-   send button + disabled state during generation
+-   response panel with clean rendering
+-   error messaging that’s specific and user-friendly
+-   optionally: prompt history only if you can implement it without modifying existing core docs/files
+
+### Deliverables per iteration
+
+-   All new code files
+-   Tests (new or improved) that align with repo testing conventions
+-   New docs:
+    -   per-module doc(s)
+    -   per-iteration trace doc entry in your docs chain
