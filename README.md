@@ -9,8 +9,6 @@ needing it.
 Built for people who keep being told this technology will change everything, and who
 have so far found it mostly annoying.
 
-Reference rulebook: https://github.com/e-allora/agentic-coding-rulebook.git
-
 ---
 
 ## Run it
