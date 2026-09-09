@@ -83,5 +83,9 @@ export function routePrompt(prompt: string, explicitIntent?: Intent): {
   model: string;
 } {
   const intent = explicitIntent ?? detectIntent(prompt);
-  return { intent, model: MODELS[intent] };
+  // OPENROUTER_MODEL (optional) forces one model for every intent — e.g.
+  // "openrouter/free" to run at zero cost. Intent detection still runs so the
+  // UI keeps showing the category. Unset it to restore per-intent routing.
+  const override = process.env.OPENROUTER_MODEL?.trim();
+  return { intent, model: override || MODELS[intent] };
 }

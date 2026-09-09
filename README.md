@@ -39,6 +39,7 @@ port — watch the terminal for the URL.
 | Variable | Required | Notes |
 |---|---|---|
 | `OPENROUTER_API_KEY` | Yes | Server-side only. Never prefix `NEXT_PUBLIC_`. |
+| `OPENROUTER_MODEL` | No | Force one model for all requests, e.g. `openrouter/free` for zero cost. Unset = per-intent routing below. |
 | `SITE_URL` | No | Public URL, sent to OpenRouter for attribution. |
 
 ## How model routing works

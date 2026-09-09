@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Karla, Newsreader } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { SITE, creditLine } from "@/lib/site";
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
@@ -90,12 +91,17 @@ export default function RootLayout({
                 About
               </Link>
               <a
-                href="https://github.com/e-allora/PromptingSite"
+                href={SITE.sourceUrl}
                 className="text-pad/80 underline-offset-4 hover:underline"
               >
                 Source
               </a>
             </div>
+            <p className="mt-6 text-xs leading-relaxed text-pad/60">
+              {creditLine()} Rewrites run on AI models from Anthropic, Google,
+              and Mistral via OpenRouter. Your words are sent to those models and
+              are not stored here.
+            </p>
           </div>
         </footer>
       </body>
