@@ -6,6 +6,8 @@
 export const SITE = {
   author: "Robert Sweetman",
   authorUrl: "", // e.g. a LinkedIn profile. Optional.
+  url: "https://plainspoken.site",
+  tagline: "Say it plainly. We'll make it land.",
   sourceUrl: "https://github.com/e-allora/PromptingSite",
 } as const;
 
