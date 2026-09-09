@@ -23,10 +23,25 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const description =
+  "Type what you want in your own words. We rewrite it into a prompt the AI understands, and show you what changed so you learn as you go.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
   title: "Plainspoken — say it plainly, we'll make it land",
-  description:
-    "Type what you want in your own words. We rewrite it into a prompt the AI understands, and show you what changed so you learn as you go.",
+  description,
+  openGraph: {
+    type: "website",
+    siteName: "Plainspoken",
+    url: SITE.url,
+    title: "Plainspoken — say it plainly, we'll make it land",
+    description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plainspoken — say it plainly, we'll make it land",
+    description,
+  },
 };
 
 export default function RootLayout({
