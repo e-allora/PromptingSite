@@ -49,6 +49,26 @@ describe("detectIntent", () => {
 });
 
 describe("routePrompt", () => {
+  it("uses OPENROUTER_MODEL for every intent when set", () => {
+    process.env.OPENROUTER_MODEL = "openrouter/free";
+    try {
+      expect(routePrompt("debug my python script").model).toBe("openrouter/free");
+      expect(routePrompt("debug my python script").intent).toBe("code");
+      expect(routePrompt("anything", "write").model).toBe("openrouter/free");
+    } finally {
+      delete process.env.OPENROUTER_MODEL;
+    }
+  });
+
+  it("ignores a blank OPENROUTER_MODEL", () => {
+    process.env.OPENROUTER_MODEL = "  ";
+    try {
+      expect(routePrompt("anything", "write").model).toBe(MODELS.write);
+    } finally {
+      delete process.env.OPENROUTER_MODEL;
+    }
+  });
+
   it("maps each intent to a configured model", () => {
     for (const intent of Object.keys(MODELS) as Intent[]) {
       expect(routePrompt("anything", intent).model).toBe(MODELS[intent]);

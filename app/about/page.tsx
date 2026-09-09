@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About — Plainspoken",
@@ -71,6 +72,37 @@ export default function About() {
             guaranteed true one. These tools state wrong things with total
             confidence. For anything that matters — medical, legal, money —
             check it against a real source or a real person.
+          </dd>
+        </div>
+
+        <div className="border-l-2 border-margin pl-4">
+          <dt className="font-display text-xl font-semibold text-ink">
+            Who made this?
+          </dt>
+          <dd className="mt-2 leading-relaxed text-ink-soft">
+            {SITE.author ? (
+              <>
+                {SITE.authorUrl ? (
+                  <a href={SITE.authorUrl} className="text-pen underline underline-offset-4">
+                    {SITE.author}
+                  </a>
+                ) : (
+                  SITE.author
+                )}{" "}
+                built it,
+              </>
+            ) : (
+              "It was built"
+            )}{" "}
+            working with Claude Code, an AI coding tool from Anthropic. The
+            person decided what it should do and how it should treat you; the
+            AI wrote most of the code. The rewrites themselves come from AI
+            models made by Anthropic, Google, and Mistral, reached through a
+            service called OpenRouter. The code is public at{" "}
+            <a href={SITE.sourceUrl} className="text-pen underline underline-offset-4">
+              GitHub
+            </a>
+            , so you can check any of this.
           </dd>
         </div>
       </dl>
