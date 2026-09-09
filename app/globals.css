@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/*
+  Plainspoken — "the marked-up draft"
+  The page is a desk. The work happens on a legal pad. Red is the editor's pen
+  and is reserved for two things only: marks and the action that makes them.
+*/
+
+@theme {
+  /* Desk */
+  --color-desk: #e9e6dc;
+  --color-desk-deep: #d8d4c6;
+
+  /* Pad */
+  --color-pad: #fbf3d5;
+  --color-pad-edge: #eadfb4;
+  --color-rule: #a8c2d8;
+  --color-margin: #d98b80;
+
+  /* Ink */
+  --color-ink: #191d2b;
+  --color-ink-soft: #4d5468;
+  --color-ink-faint: #808799;
+
+  /* Editor's pen */
+  --color-pen: #c8402b;
+  --color-pen-deep: #a5301f;
+  --color-pen-wash: #f7e2dd;
+
+  /* Blotter — used for footer + emphasis blocks */
+  --color-blotter: #23412f;
+
+  --font-display: var(--font-newsreader), Georgia, serif;
+  --font-body: var(--font-karla), system-ui, sans-serif;
+  --font-draft: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* One rhythm value, deliberately not uniform padding everywhere */
+  --spacing-section: clamp(3.5rem, 2.5rem + 4vw, 7rem);
+
+  --text-hero: clamp(2.5rem, 1.4rem + 4.6vw, 5rem);
+  --text-title: clamp(1.75rem, 1.3rem + 1.9vw, 2.75rem);
+
+  --ease-paper: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  background: var(--color-desk);
+}
+
+body {
+  background: var(--color-desk);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  /* Faint paper tooth on the desk surface. */
+  background-image: radial-gradient(
+    var(--color-desk-deep) 0.5px,
+    transparent 0.5px
+  );
+  background-size: 14px 14px;
+}
+
+/* A sheet from the pad. Colour and edge only — no rules. */
+.pad {
+  background-color: var(--color-pad);
+  border: 1px solid var(--color-pad-edge);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 12px 28px -18px rgba(25, 29, 43, 0.55);
+}
+
+/*
+  The ruled writing surface. Rules are real structure — they are what you write
+  on — so they only appear where writing actually happens, never behind labels
+  or prose.
+
+  Contract: this element carries no vertical padding, and every text child must
+  use `.on-rules` (line-height 1.75rem, matching the rule pitch). Text then
+  lands on the rule instead of being struck through by it.
+*/
+.pad-ruled {
+  --rule-pitch: 1.75rem;
+  padding-block: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--rule-pitch) - 1px),
+    var(--color-rule) calc(var(--rule-pitch) - 1px),
+    var(--color-rule) var(--rule-pitch)
+  );
+}
+
+.on-rules {
+  line-height: 1.75rem;
+}
+
+/* The red margin rule down the left of a sheet. */
+.pad-margin {
+  position: relative;
+}
+.pad-margin::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 2.5rem;
+  width: 1px;
+  background: var(--color-margin);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-pen);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Page-load sequence: the sheet settles onto the desk. One orchestrated
+   moment, not scattered effects. */
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.settle {
+  animation: settle 0.6s var(--ease-paper) both;
+}

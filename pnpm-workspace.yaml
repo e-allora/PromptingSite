@@ -1,0 +1,9 @@
+# This repo sits inside a directory that is itself a pnpm project, so pnpm
+# would otherwise walk up and treat that as the workspace root. Declaring the
+# package list here pins the root to this repo.
+packages:
+  - .
+
+allowBuilds:
+  sharp: true
+  unrs-resolver: true

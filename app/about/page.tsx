@@ -1,0 +1,87 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "About — Plainspoken",
+  description:
+    "What Plainspoken is, who it's for, what it does with your words, and what it costs.",
+};
+
+export default function About() {
+  return (
+    <div className="mx-auto w-full max-w-3xl px-5 pt-12 pb-(--spacing-section) sm:pt-16">
+      <h1 className="font-display text-(length:--text-hero) leading-[0.95] font-semibold tracking-tight text-balance text-ink">
+        About
+      </h1>
+
+      <div className="mt-8 space-y-5">
+        <p className="text-lg leading-relaxed text-ink-soft">
+          Plainspoken takes the rough sentence you were going to type into an AI
+          and rewrites it into one that works. Then it tells you what it changed
+          and why, because the goal is that you stop needing it.
+        </p>
+        <p className="text-lg leading-relaxed text-ink-soft">
+          It&apos;s built for people who keep being told this technology will
+          change everything, and who have so far found it mostly annoying.
+          That&apos;s not a you problem. Nobody was handed the instructions.
+        </p>
+      </div>
+
+      <dl className="mt-12 space-y-8">
+        <div className="border-l-2 border-margin pl-4">
+          <dt className="font-display text-xl font-semibold text-ink">
+            What happens to what I type?
+          </dt>
+          <dd className="mt-2 leading-relaxed text-ink-soft">
+            It&apos;s sent to an AI model to be rewritten, and the result comes
+            back to you. There are no accounts, so nothing is tied to your name.
+            Even so — don&apos;t paste in passwords, card numbers, or anything
+            you&apos;d mind a stranger reading. That&apos;s good practice with
+            any AI tool, not just this one.
+          </dd>
+        </div>
+
+        <div className="border-l-2 border-margin pl-4">
+          <dt className="font-display text-xl font-semibold text-ink">
+            Does it cost anything?
+          </dt>
+          <dd className="mt-2 leading-relaxed text-ink-soft">
+            No. There&apos;s a cap on how many rewrites one person can run in an
+            hour, which keeps the bill survivable. If you hit it, wait a bit.
+          </dd>
+        </div>
+
+        <div className="border-l-2 border-margin pl-4">
+          <dt className="font-display text-xl font-semibold text-ink">
+            Will it write the thing for me?
+          </dt>
+          <dd className="mt-2 leading-relaxed text-ink-soft">
+            No, and that&apos;s deliberate. It writes the <em>instruction</em>.
+            You take that to ChatGPT, Claude, Gemini, or whatever you already
+            use, and that tool does the work. This is the bit that goes before.
+          </dd>
+        </div>
+
+        <div className="border-l-2 border-margin pl-4">
+          <dt className="font-display text-xl font-semibold text-ink">
+            Can I trust what the AI tells me afterwards?
+          </dt>
+          <dd className="mt-2 leading-relaxed text-ink-soft">
+            Not blindly. A better prompt gets you a better answer, not a
+            guaranteed true one. These tools state wrong things with total
+            confidence. For anything that matters — medical, legal, money —
+            check it against a real source or a real person.
+          </dd>
+        </div>
+      </dl>
+
+      <p className="mt-12 text-ink-soft">
+        Want the short version of the skill itself?{" "}
+        <Link href="/learn" className="text-pen underline underline-offset-4">
+          Six lessons, two minutes each
+        </Link>
+        .
+      </p>
+    </div>
+  );
+}
