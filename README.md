@@ -1,4 +1,4 @@
-# PromptingSite
+# Plainspoken
 
 A prompting improvement site.
 
